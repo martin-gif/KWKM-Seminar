@@ -3,6 +3,8 @@ import sys
 import pandas as pd
 
 from survey_analysis import SurveyAnalyzer
+from ttest import do_ttest
+
 
 def creat_head_dict_from_csv():
     meta = pd.read_csv("survey-key-question.csv")  # first row of survey with codes and question
@@ -54,3 +56,5 @@ if __name__ == "__main__":
     analyzer.plot_group_box_and_points(df_clean)
     analyzer.plot_histograms(df_clean)
     analyzer.plot_scatter_autonomous_vs_reskill(df_clean)
+
+    do_ttest(df)
