@@ -34,25 +34,29 @@ if __name__ == "__main__":
     df = pd.concat([df_young, df_old], ignore_index=True)
     # print(df.iloc[1]) # with question key
     # print(get_full_question(df).iloc[1]) # with full questions
+    # print(df.shape[0])
+    # df = df.dropna()
+    # print(df.shape[0])
 
-    analyzer = SurveyAnalyzer(
-        young_csv="data/results-survey779776.csv",
-        old_csv="data/results-survey374736.csv",
-        key_csv="data/survey-key-question.csv",
-        group_col="young_group",
-        young_value=1,
-        old_value=0,
-    )
+    if True:
+        analyzer = SurveyAnalyzer(
+            young_csv="data/results-survey779776.csv",
+            old_csv="data/results-survey374736.csv",
+            key_csv="data/survey-key-question.csv",
+            group_col="young_group",
+            young_value=1,
+            old_value=0,
+        )
 
-    df_clean = analyzer.prepare_clean_dataset()
+        df_clean = analyzer.prepare_clean_dataset()
 
-    analyzer.run_ttest_autonomous_by_group(df_clean)
-    analyzer.run_ancova(df_clean)
+        analyzer.run_ttest_autonomous_by_group(df_clean)
+        analyzer.run_ancova(df_clean)
 
-    df_clean.to_csv("data/analysis.csv", index=False)
+        df_clean.to_csv("data/analysis.csv", index=False)
 
-    analyzer.plot_group_box_and_points(df_clean)
-    analyzer.plot_histograms(df_clean)
-    analyzer.plot_scatter_autonomous_vs_reskill(df_clean)
+        analyzer.plot_group_box_and_points(df_clean)
+        analyzer.plot_histograms(df_clean)
+        analyzer.plot_scatter_autonomous_vs_reskill(df_clean)
 
     do_ttest(df)
