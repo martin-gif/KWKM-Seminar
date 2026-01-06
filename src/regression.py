@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 def main():
 
     #Read the CSV file
-    csvFile = "results-survey779776.csv"
+    csvFile = "../data/results-survey779776.csv"
 
     df = pd.read_csv(csvFile)
 

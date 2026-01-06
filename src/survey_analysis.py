@@ -11,9 +11,9 @@ import matplotlib.pyplot as plt
 class SurveyAnalyzer:
     def __init__(
         self,
-        young_csv: str = "results-survey779776.csv",
-        old_csv: str = "results-survey374736.csv",
-        key_csv: str = "survey-key-question.csv",
+        young_csv: str = "data/results-survey779776.csv",
+        old_csv: str = "data/results-survey374736.csv",
+        key_csv: str = "data/survey-key-question.csv",
         group_col: str = "young_group",
         young_value: int = 1,
         old_value: int = 0,
@@ -136,7 +136,7 @@ class SurveyAnalyzer:
     # -----------------------------
     # Plots
     # -----------------------------
-    def plot_group_box_and_points(self, df_clean: pd.DataFrame, out_png: str = "plot_box_autonomous_use.png") -> None:
+    def plot_group_box_and_points(self, df_clean: pd.DataFrame, out_png: str = "figures/plot_box_autonomous_use.png") -> None:
         g0 = df_clean.loc[df_clean[self.group_col] == self.old_value, "autonomous_use"].to_numpy()
         g1 = df_clean.loc[df_clean[self.group_col] == self.young_value, "autonomous_use"].to_numpy()
 
@@ -153,9 +153,9 @@ class SurveyAnalyzer:
         plt.title("Autonomous LLM use by group")
         plt.tight_layout()
         plt.savefig(out_png, dpi=200)
-        plt.show()
+        # plt.show()
 
-    def plot_histograms(self, df_clean: pd.DataFrame, out_png: str = "plot_hist_autonomous_use.png") -> None:
+    def plot_histograms(self, df_clean: pd.DataFrame, out_png: str = "figures/plot_hist_autonomous_use.png") -> None:
         g0 = df_clean.loc[df_clean[self.group_col] == self.old_value, "autonomous_use"]
         g1 = df_clean.loc[df_clean[self.group_col] == self.young_value, "autonomous_use"]
 
@@ -168,12 +168,12 @@ class SurveyAnalyzer:
         plt.legend()
         plt.tight_layout()
         plt.savefig(out_png, dpi=200)
-        plt.show()
+        # plt.show()
 
     def plot_scatter_autonomous_vs_reskill(
         self,
         df_clean: pd.DataFrame,
-        out_png: str = "plot_scatter_autonomous_vs_reskill.png",
+        out_png: str = "figures/plot_scatter_autonomous_vs_reskill.png",
     ) -> None:
         plt.figure()
         for grp, label in [(self.young_value, "young (1)"), (self.old_value, "old (0)")]:
@@ -186,4 +186,4 @@ class SurveyAnalyzer:
         plt.legend()
         plt.tight_layout()
         plt.savefig(out_png, dpi=200)
-        plt.show()
+        # plt.show()

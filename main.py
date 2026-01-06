@@ -1,13 +1,11 @@
-import sys
-
 import pandas as pd
 
-from survey_analysis import SurveyAnalyzer
-from ttest import do_ttest
+from src.survey_analysis import SurveyAnalyzer
+from src.ttest import do_ttest
 
 
 def creat_head_dict_from_csv():
-    meta = pd.read_csv("survey-key-question.csv")  # first row of survey with codes and question
+    meta = pd.read_csv("data/survey-key-question.csv")  # first row of survey with codes and question
     meta = meta.columns.to_series().reset_index(drop=True)
     meta = meta.to_frame(name="raw")
 
@@ -20,17 +18,17 @@ def creat_head_dict_from_csv():
 
 
 def get_full_question(df: pd.DataFrame):
-    meta = pd.read_csv("survey-key-question.csv").set_index("id")["text"]
+    meta = pd.read_csv("data/survey-key-question.csv").set_index("id")["text"]
     mapping = meta.to_dict()
     df = df.rename(columns=mapping, errors="raise")
     return df
 
 
 if __name__ == "__main__":
-    df_young = pd.read_csv("results-survey779776.csv")
+    df_young = pd.read_csv("data/results-survey779776.csv")
     df_young = df_young.assign(young_group=1)
 
-    df_old = pd.read_csv("results-survey374736.csv")
+    df_old = pd.read_csv("data/results-survey374736.csv")
     df_old = df_old.assign(young_group=0)
 
     df = pd.concat([df_young, df_old], ignore_index=True)
@@ -38,9 +36,9 @@ if __name__ == "__main__":
     # print(get_full_question(df).iloc[1]) # with full questions
 
     analyzer = SurveyAnalyzer(
-        young_csv="results-survey779776.csv",
-        old_csv="results-survey374736.csv",
-        key_csv="survey-key-question.csv",
+        young_csv="data/results-survey779776.csv",
+        old_csv="data/results-survey374736.csv",
+        key_csv="data/survey-key-question.csv",
         group_col="young_group",
         young_value=1,
         old_value=0,
@@ -51,7 +49,7 @@ if __name__ == "__main__":
     analyzer.run_ttest_autonomous_by_group(df_clean)
     analyzer.run_ancova(df_clean)
 
-    df_clean.to_csv("analysis.csv", index=False)
+    df_clean.to_csv("data/analysis.csv", index=False)
 
     analyzer.plot_group_box_and_points(df_clean)
     analyzer.plot_histograms(df_clean)

@@ -13,8 +13,8 @@ import statsmodels.api as sm
 # -------------------------
 # 1) Dateien laden
 # -------------------------
-DATA_FILE = "results-survey374736.csv"   # eure Antworten (25 x 74)
-LABEL_FILE = "results-full.csv"          # eure "Spaltennamen detaillierter" (optional)
+DATA_FILE = "../data/results-survey374736.csv"  # eure Antworten (25 x 74)
+LABEL_FILE = "../data/results-full.csv"  # eure "Spaltennamen detaillierter" (optional)
 
 df = pd.read_csv(DATA_FILE)
 
