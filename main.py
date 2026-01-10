@@ -1,5 +1,6 @@
 import pandas as pd
 
+from src.correlation_matrix import calc_correlation
 from src.survey_analysis import SurveyAnalyzer
 from src.ttest import do_ttest
 from src.group import group_data
@@ -47,7 +48,7 @@ if __name__ == "__main__":
     df = df.dropna(axis="columns", thresh=min_count)
     # df = df.dropna()
 
-    df_grouped = group_data(df, print_cronbach=True)
+    df_grouped = group_data(df, print_cronbach=False)
 
     if True:
         analyzer = SurveyAnalyzer(
@@ -70,4 +71,5 @@ if __name__ == "__main__":
         analyzer.plot_histograms(df_clean)
         analyzer.plot_scatter_autonomous_vs_reskill(df_clean)
 
+    calc_correlation(df_grouped, save_fig=False)
     do_ttest(df)

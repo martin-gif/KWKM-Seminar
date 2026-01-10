@@ -37,6 +37,9 @@ SCALES = {
         "G05Q19[5]",
         "G05Q19[6]",
     ],
+    "young_group": [
+        "young_group",
+    ],
 }
 
 
