@@ -2,10 +2,13 @@ import pandas as pd
 
 from src.survey_analysis import SurveyAnalyzer
 from src.ttest import do_ttest
+from src.group import group_data
 
 
 def creat_head_dict_from_csv():
-    meta = pd.read_csv("data/survey-key-question.csv")  # first row of survey with codes and question
+    meta = pd.read_csv(
+        "data/survey-key-question.csv"
+    )  # first row of survey with codes and question
     meta = meta.columns.to_series().reset_index(drop=True)
     meta = meta.to_frame(name="raw")
 
@@ -39,10 +42,12 @@ if __name__ == "__main__":
     min_count = int(column_answer_percentage * len(df))
 
     # delete rows where user didnt finished
-    df = df[df['submitdate'].notna()]
+    df = df[df["submitdate"].notna()]
     # drop columns with to litte partisans
     df = df.dropna(axis="columns", thresh=min_count)
     # df = df.dropna()
+
+    df_grouped = group_data(df, print_cronbach=True)
 
     if True:
         analyzer = SurveyAnalyzer(
