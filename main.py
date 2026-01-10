@@ -34,9 +34,15 @@ if __name__ == "__main__":
     df = pd.concat([df_young, df_old], ignore_index=True)
     # print(df.iloc[1]) # with question key
     # print(get_full_question(df).iloc[1]) # with full questions
-    # print(df.shape[0])
+
+    column_answer_percentage = 0.8
+    min_count = int(column_answer_percentage * len(df))
+
+    # delete rows where user didnt finished
+    df = df[df['submitdate'].notna()]
+    # drop columns with to litte partisans
+    df = df.dropna(axis="columns", thresh=min_count)
     # df = df.dropna()
-    # print(df.shape[0])
 
     if True:
         analyzer = SurveyAnalyzer(
