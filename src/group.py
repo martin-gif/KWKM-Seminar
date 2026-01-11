@@ -2,6 +2,9 @@ import pandas as pd
 import pingouin as pg
 
 SCALES = {
+    "usage": [
+        "G03Q12",
+    ],
     "usefulness_work": [
         "G03Q13[1]",
         "G03Q13[2]",
@@ -51,7 +54,9 @@ def group_data(input_df, print_cronbach=False) -> pd.DataFrame:
     for key, column_list in SCALES.items():
         if print_cronbach:
             cronbach = pg.cronbach_alpha(data=input_df[column_list])
-            print(f"Cronbach's Alpha für group {key} = {round(cronbach[0], 3)}")
+            print(
+                f"Cronbach's Alpha für group {key} = {round(cronbach[0], 3)}, mit der grenze {cronbach[1]}"
+            )
         df[key] = input_df[column_list].mean(axis=1)
 
     # print(df)

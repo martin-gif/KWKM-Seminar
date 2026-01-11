@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 
 
-def _fig(df, title: str = None) -> plt.Figure:
+def _fig(df, file_name: str, title: str = None):
     fig, ax = plt.subplots()
 
     if title is not None:
@@ -13,7 +13,8 @@ def _fig(df, title: str = None) -> plt.Figure:
     plt.xticks(rotation=45)
     fig.tight_layout()
 
-    plt.show()
+    # plt.show()
+    plt.savefig(file_name)
 
 
 def calc_correlation(df: pd.DataFrame, save_fig=False):
@@ -26,7 +27,15 @@ def calc_correlation(df: pd.DataFrame, save_fig=False):
     )
 
     if save_fig:
-        _fig(corr_matrix_young, title="Young correlation")
-        _fig(corr_matrix_old, title="Old correlation")
+        _fig(
+            corr_matrix_young,
+            title="Young correlation",
+            file_name="figures/corr_matrix_young.png",
+        )
+        _fig(
+            corr_matrix_old,
+            title="Old correlation",
+            file_name="figures/corr_matrix_old.png",
+        )
 
     return corr_matrix_young, corr_matrix_old
