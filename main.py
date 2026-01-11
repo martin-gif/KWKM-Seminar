@@ -4,6 +4,7 @@ from src.correlation_matrix import calc_correlation
 from src.survey_analysis import SurveyAnalyzer
 from src.ttest import do_ttest
 from src.group import group_data
+from src.descriptives import descriptives_by_group
 
 
 def creat_head_dict_from_csv():
@@ -49,6 +50,19 @@ if __name__ == "__main__":
     # df = df.dropna()
 
     df_grouped = group_data(df, print_cronbach=False)
+
+    vars_usefulness = ["usefulness_work", "usefulness_learning"]
+    vars_motivation = ["controlled_motivation", "autonomous_motivation"]
+
+    desc = descriptives_by_group(
+    df=df_grouped,
+    group_col="young_group",
+    vars_usefulness=vars_usefulness,
+    vars_motivation=vars_motivation,
+    confidence=0.95,
+    )   
+
+    print(desc)
 
     if True:
         analyzer = SurveyAnalyzer(
