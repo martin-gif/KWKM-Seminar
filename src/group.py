@@ -5,6 +5,7 @@ SCALES = {
     "usage": [
         "G03Q12",
     ],
+    "age": ["G02Q04"],
     "usefulness_work": [
         "G03Q13[1]",
         "G03Q13[2]",
@@ -30,13 +31,10 @@ SCALES = {
         "G03Q14[10]",
     ],
     "external_regulation_material": ["G04Q16[13]", "G04Q16[6]", "G04Q16[19]"],
-    "external_regulation_social":   ["G04Q16[10]", "G04Q16[16]", "G04Q16[2]"],
-    "introjected_regulation":       ["G04Q16[12]", "G04Q16[5]", "G04Q16[18]", "G04Q16[20]"],
-    "intrinsic_regulation":         ["G04Q16[8]", "G04Q16[3]", "G04Q16[14]"],
-    "identified_regulation":        ["G04Q16[1]", "G04Q16[15]", "G04Q16[7]"],
-
-    "mot_intrinsic": ["G04Q16[3]", "G04Q16[8]", "G04Q16[14]"],
-    "mot_ext_social": ["G04Q16[2]", "G04Q16[10]", "G04Q16[16]"],
+    "external_regulation_social": ["G04Q16[10]", "G04Q16[16]", "G04Q16[2]"],
+    "introjected_regulation": ["G04Q16[12]", "G04Q16[5]", "G04Q16[18]", "G04Q16[20]"],
+    "intrinsic_regulation": ["G04Q16[8]", "G04Q16[3]", "G04Q16[14]"],
+    "identified_regulation": ["G04Q16[1]", "G04Q16[15]", "G04Q16[7]"],
     "upskilling": ["G05Q18[1]", "G05Q18[2]", "G05Q18[3]", "G05Q18[4]", "G05Q18[5]"],
     "reskilling": [
         "G05Q19[1]",
@@ -56,7 +54,7 @@ def group_data(input_df, print_cronbach=False) -> pd.DataFrame:
     all_items = [item for items in SCALES.values() for item in items]
     unique_items = list(dict.fromkeys(all_items))
     cols = [c for c in unique_items if c in input_df.columns]
-    #input_df[all_items] = input_df[all_items].apply(pd.to_numeric, errors="coerce")
+    # input_df[all_items] = input_df[all_items].apply(pd.to_numeric, errors="coerce")
     input_df.loc[:, cols] = input_df.loc[:, cols].apply(pd.to_numeric, errors="coerce")
 
     df = pd.DataFrame()
@@ -70,13 +68,13 @@ def group_data(input_df, print_cronbach=False) -> pd.DataFrame:
 
     ext_mat = "external_regulation_material"
     ext_soc = "external_regulation_social"
-    introj  = "introjected_regulation"
-    intrin  = "intrinsic_regulation"
-    ident   = "identified_regulation"
+    introj = "introjected_regulation"
+    intrin = "intrinsic_regulation"
+    ident = "identified_regulation"
 
     df["controlled_motivation"] = (((df[ext_mat] + df[ext_soc]) / 2) + df[introj]) / 2
 
     df["autonomous_motivation"] = (df[intrin] + df[ident]) / 2
 
-    #print(df)
+    # print(df)
     return df
