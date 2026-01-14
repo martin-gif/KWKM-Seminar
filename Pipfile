@@ -10,6 +10,9 @@ matplotlib = "*"
 seaborn = "*"
 scipy = "*"
 statsmodels = "*"
+requests = "*"
+flask = "*"
+pingouin = "*"
 
 [dev-packages]
 

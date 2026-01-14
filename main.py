@@ -2,6 +2,7 @@ import pandas as pd
 
 from src.correlation_matrix import calc_correlation
 from src.survey_analysis import SurveyAnalyzer
+from src.survey_statistics import SurveyStatistics
 from src.ttest import do_ttest
 from src.group import group_data
 from src.descriptives import descriptives_by_group
@@ -84,6 +85,10 @@ if __name__ == "__main__":
         analyzer.plot_group_box_and_points(df_clean)
         analyzer.plot_histograms(df_clean)
         analyzer.plot_scatter_autonomous_vs_reskill(df_clean)
+        
+        # Survey statistics using data from main
+        survey_stats = SurveyStatistics(df=df)
+        survey_stats.print_summary()
 
     calc_correlation(df_grouped, save_fig=False)
     do_ttest(df)
