@@ -6,6 +6,7 @@ from src.survey_statistics import SurveyStatistics
 from src.ttest import do_ttest
 from src.group import group_data
 from src.descriptives import descriptives_by_group
+from src.linear_regression import linear_regression
 
 
 def creat_head_dict_from_csv():
@@ -56,16 +57,16 @@ if __name__ == "__main__":
     vars_motivation = ["controlled_motivation", "autonomous_motivation"]
 
     desc = descriptives_by_group(
-    df=df_grouped,
-    group_col="young_group",
-    vars_usefulness=vars_usefulness,
-    vars_motivation=vars_motivation,
-    confidence=0.95,
-    )   
+        df=df_grouped,
+        group_col="young_group",
+        vars_usefulness=vars_usefulness,
+        vars_motivation=vars_motivation,
+        confidence=0.95,
+    )
 
     print(desc)
 
-    if True:
+    if False:
         analyzer = SurveyAnalyzer(
             young_csv="data/results-survey779776.csv",
             old_csv="data/results-survey374736.csv",
@@ -90,5 +91,33 @@ if __name__ == "__main__":
         survey_stats = SurveyStatistics(df=df)
         survey_stats.print_summary()
 
-    calc_correlation(df_grouped, save_fig=False)
-    do_ttest(df)
+        calc_correlation(
+            df_grouped[["upskilling", "reskilling", "usage", "age", "young_group"]],
+            save_fig=True,
+        )
+        for y in ["autonomous_motivation", "controlled_motivation"]:
+            linear_regression(
+                df_X=df_grouped[
+                    [
+                        "upskilling",
+                        "reskilling",
+                        "age",
+                        "usage",
+                    ]
+                ],
+                df_Y=df_grouped[y],
+                print_summary=True,
+            )
+
+            do_ttest(
+                df_grouped[
+                    [
+                        "autonomous_motivation",
+                        "controlled_motivation",
+                        "usefulness_work",
+                        "usefulness_learning",
+                        "young_group",
+                    ]
+                ],
+                print_results=False,
+            )
