@@ -86,38 +86,38 @@ if __name__ == "__main__":
         analyzer.plot_group_box_and_points(df_clean)
         analyzer.plot_histograms(df_clean)
         analyzer.plot_scatter_autonomous_vs_reskill(df_clean)
-        
+
         # Survey statistics using data from main
         survey_stats = SurveyStatistics(df=df)
         survey_stats.print_summary()
 
-        calc_correlation(
-            df_grouped[["upskilling", "reskilling", "usage", "age", "young_group"]],
-            save_fig=True,
+    calc_correlation(
+        df_grouped[["upskilling", "reskilling", "usage", "age", "young_group"]],
+        save_fig=True,
+    )
+    for y in ["autonomous_motivation", "controlled_motivation"]:
+        linear_regression(
+            df_X=df_grouped[
+                [
+                    "upskilling",
+                    "reskilling",
+                    "age",
+                    "usage",
+                ]
+            ],
+            df_Y=df_grouped[y],
+            print_summary=True,
         )
-        for y in ["autonomous_motivation", "controlled_motivation"]:
-            linear_regression(
-                df_X=df_grouped[
-                    [
-                        "upskilling",
-                        "reskilling",
-                        "age",
-                        "usage",
-                    ]
-                ],
-                df_Y=df_grouped[y],
-                print_summary=True,
-            )
 
-            do_ttest(
-                df_grouped[
-                    [
-                        "autonomous_motivation",
-                        "controlled_motivation",
-                        "usefulness_work",
-                        "usefulness_learning",
-                        "young_group",
-                    ]
-                ],
-                print_results=False,
-            )
+    do_ttest(
+        df_grouped[
+            [
+                "autonomous_motivation",
+                "controlled_motivation",
+                "usefulness_work",
+                "usefulness_learning",
+                "young_group",
+            ]
+        ],
+        print_results=True,
+    )

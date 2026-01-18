@@ -1,5 +1,5 @@
 from numpy.ma.core import equal
-from scipy.stats import ttest_ind, levene
+from scipy.stats import ttest_ind, levene, shapiro
 import pandas as pd
 import warnings
 
@@ -12,7 +12,7 @@ def do_ttest(df: pd.DataFrame, print_results: bool = False):
         g0 = df.loc[df["young_group"] == 0, column].dropna()
         g1 = df.loc[df["young_group"] == 1, column].dropna()
         levene_stat, p_value = levene_test(g0, g1)
-        equal_var = p_value < 0.05
+        equal_var = p_value > 0.05
         # print(equal_var)
 
         if g0.dtype != "float64" or g1.dtype != "float64":
