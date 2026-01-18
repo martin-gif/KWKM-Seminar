@@ -3,6 +3,11 @@ from scipy.stats import ttest_ind, levene, shapiro
 import pandas as pd
 import warnings
 
+def do_ttest(df: pd.DataFrame):
+    results = []
+    r = re.compile(r"G\d{2}Q\d{2}")
+
+    scales = df.columns
 
 def do_ttest(df: pd.DataFrame, print_results: bool = False):
     results = []

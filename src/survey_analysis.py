@@ -102,7 +102,9 @@ class SurveyAnalyzer:
     # -----------------------------
     # Stats
     # -----------------------------
-    def run_ttest_autonomous_by_group(self, df_clean: pd.DataFrame) -> None:
+    def run_ttest_autonomous_by_group(
+        self, df_clean: pd.DataFrame, print_output: bool = True, generate_files: bool = True
+    ) -> None:
         g1 = df_clean.loc[df_clean[self.group_col] == self.young_value, "autonomous_use"]
         g0 = df_clean.loc[df_clean[self.group_col] == self.old_value, "autonomous_use"]
 
@@ -110,33 +112,43 @@ class SurveyAnalyzer:
         equal_var = lev_p > 0.05
         t_stat, p_val = stats.ttest_ind(g1, g0, equal_var=equal_var)
 
-        print("=== T-TEST autonomous_use by group ===")
-        print("Levene p =", lev_p)
-        print("t-stat   =", t_stat)
-        print("p-value  =", p_val)
-        print("mean young =", g1.mean())
-        print("mean old   =", g0.mean())
-        print()
+        if print_output:
+            print("=== T-TEST autonomous_use by group ===")
+            print("Levene p =", lev_p)
+            print("t-stat   =", t_stat)
+            print("p-value  =", p_val)
+            print("mean young =", g1.mean())
+            print("mean old   =", g0.mean())
+            print()
 
-    def run_ancova(self, df_clean: pd.DataFrame):
+    def run_ancova(
+        self, df_clean: pd.DataFrame, print_output: bool = True, generate_files: bool = True
+    ):
         model = smf.ols(
             f"autonomous_use ~ C({self.group_col}) + upskill_orientation + reskill_orientation",
             data=df_clean,
         ).fit()
 
-        print("=== ANCOVA (Type II SS) ===")
-        print(sm.stats.anova_lm(model, typ=2))
-        print()
-        print("=== Regression Summary ===")
-        print(model.summary())
-        print()
+        if print_output:
+            print("=== ANCOVA (Type II SS) ===")
+            print(sm.stats.anova_lm(model, typ=2))
+            print()
+            print("=== Regression Summary ===")
+            print(model.summary())
+            print()
 
         return model
 
     # -----------------------------
     # Plots
     # -----------------------------
-    def plot_group_box_and_points(self, df_clean: pd.DataFrame, out_png: str = "figures/plot_box_autonomous_use.png") -> None:
+    def plot_group_box_and_points(
+        self,
+        df_clean: pd.DataFrame,
+        print_output: bool = True,
+        generate_files: bool = True,
+        out_png: str = "figures/plot_box_autonomous_use.png",
+    ) -> None:
         g0 = df_clean.loc[df_clean[self.group_col] == self.old_value, "autonomous_use"].to_numpy()
         g1 = df_clean.loc[df_clean[self.group_col] == self.young_value, "autonomous_use"].to_numpy()
 
@@ -152,10 +164,21 @@ class SurveyAnalyzer:
         plt.ylabel("autonomous_use (mean of G05Q18[1..5])")
         plt.title("Autonomous LLM use by group")
         plt.tight_layout()
-        plt.savefig(out_png, dpi=200)
-        # plt.show()
+        
+        if generate_files:
+            plt.savefig(out_png, dpi=200)
+        if print_output:
+            plt.show()
+        else:
+            plt.close()
 
-    def plot_histograms(self, df_clean: pd.DataFrame, out_png: str = "figures/plot_hist_autonomous_use.png") -> None:
+    def plot_histograms(
+        self,
+        df_clean: pd.DataFrame,
+        print_output: bool = True,
+        generate_files: bool = True,
+        out_png: str = "figures/plot_hist_autonomous_use.png",
+    ) -> None:
         g0 = df_clean.loc[df_clean[self.group_col] == self.old_value, "autonomous_use"]
         g1 = df_clean.loc[df_clean[self.group_col] == self.young_value, "autonomous_use"]
 
@@ -167,12 +190,19 @@ class SurveyAnalyzer:
         plt.title("Distribution of autonomous_use by group")
         plt.legend()
         plt.tight_layout()
-        plt.savefig(out_png, dpi=200)
-        # plt.show()
+        
+        if generate_files:
+            plt.savefig(out_png, dpi=200)
+        if print_output:
+            plt.show()
+        else:
+            plt.close()
 
     def plot_scatter_autonomous_vs_reskill(
         self,
         df_clean: pd.DataFrame,
+        print_output: bool = True,
+        generate_files: bool = True,
         out_png: str = "figures/plot_scatter_autonomous_vs_reskill.png",
     ) -> None:
         plt.figure()
@@ -185,5 +215,10 @@ class SurveyAnalyzer:
         plt.title("Autonomous use vs reskill orientation")
         plt.legend()
         plt.tight_layout()
-        plt.savefig(out_png, dpi=200)
-        # plt.show()
+        
+        if generate_files:
+            plt.savefig(out_png, dpi=200)
+        if print_output:
+            plt.show()
+        else:
+            plt.close()

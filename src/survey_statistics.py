@@ -106,8 +106,11 @@ class SurveyStatistics:
             'vocational_education': self.vocational_education_statistics()
         }
 
-    def print_summary(self):
+    def print_summary(self, print_output: bool = True, generate_files: bool = True):
         """Print all survey statistics in formatted tables."""
+        if not print_output:
+            return
+            
         print("\n" + "=" * 80)
         print(" " * 20 + "SURVEY STATISTICS SUMMARY")
         print("=" * 80)
@@ -147,6 +150,32 @@ class SurveyStatistics:
         ).reset_index(drop=True)
         print(gender_df.to_string(index=False))
         print(f"\nTotal Respondents: {gender_stats['total']}")
+
+        # School Education Statistics
+        print("\n" + "-" * 80)
+        print("🎓 SCHOOL EDUCATION LEVEL")
+        print("-" * 80)
+        school_stats = self.school_education_statistics()
+        school_df = pd.DataFrame(
+            list(school_stats["participants_per_school_education"].items()),
+            columns=["Education Level", "Count"],
+        ).reset_index(drop=True)
+        print(school_df.to_string(index=False))
+        print(f"\nTotal Respondents: {school_stats['total']}")
+
+        # Vocational Education Statistics
+        print("\n" + "-" * 80)
+        print("🛠️  VOCATIONAL EDUCATION")
+        print("-" * 80)
+        voc_stats = self.vocational_education_statistics()
+        voc_df = pd.DataFrame(
+            list(voc_stats["participants_per_vocational_education"].items()),
+            columns=["Vocational Status", "Count"],
+        ).reset_index(drop=True)
+        print(voc_df.to_string(index=False))
+        print(f"\nTotal Respondents: {voc_stats['total']}")
+
+        print("\n" + "=" * 80 + "\n")
 
         # School Education Statistics
         print("\n" + "-" * 80)
