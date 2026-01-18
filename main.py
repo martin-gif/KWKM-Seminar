@@ -1,11 +1,18 @@
+from math import inf
+
+import numpy as np
 import pandas as pd
 
-from src.correlation_matrix import calc_correlation
+from src.correlation_matrix import (
+    calc_correlation,
+    calc_correlation_motivation_skilling,
+)
 from src.survey_analysis import SurveyAnalyzer
 from src.survey_statistics import SurveyStatistics
 from src.ttest import do_ttest
 from src.group import group_data
 from src.descriptives import descriptives_by_group
+from src.linear_regression import linear_regression
 
 # ===========================
 # CONFIGURATION
@@ -47,6 +54,10 @@ def get_full_question(df: pd.DataFrame):
     return df
 
 
+def check_age(df, low_bound, upper_bound):
+    return df[(df["G02Q04"] >= low_bound) & (df["G02Q04"] <= upper_bound)]
+
+
 if __name__ == "__main__":
     # Load and combine datasets
     df_young = pd.read_csv(YOUNG_CSV)
@@ -67,6 +78,8 @@ if __name__ == "__main__":
     # drop columns with to litte partisans
     df = df.dropna(axis="columns", thresh=min_count)
     # df = df.dropna()
+    # print(df[df["young_group"] == 1].shape)
+    # print(df[df["young_group"] == 0].shape)
 
     # Create grouped dataset with calculated variables
     # Create grouped dataset with calculated variables
