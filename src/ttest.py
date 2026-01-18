@@ -4,7 +4,7 @@ import re
 
 def do_ttest(df: pd.DataFrame):
     results = []
-    r = re.compile("G\d{2}Q\d{2}")
+    r = re.compile(r"G\d{2}Q\d{2}")
 
     scales = df.columns
 
