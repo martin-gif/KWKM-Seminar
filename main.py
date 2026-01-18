@@ -1,6 +1,12 @@
+from math import inf
+
+import numpy as np
 import pandas as pd
 
-from src.correlation_matrix import calc_correlation
+from src.correlation_matrix import (
+    calc_correlation,
+    calc_correlation_motivation_skilling,
+)
 from src.survey_analysis import SurveyAnalyzer
 from src.survey_statistics import SurveyStatistics
 from src.ttest import do_ttest
@@ -31,11 +37,17 @@ def get_full_question(df: pd.DataFrame):
     return df
 
 
+def check_age(df, low_bound, upper_bound):
+    return df[(df["G02Q04"] >= low_bound) & (df["G02Q04"] <= upper_bound)]
+
+
 if __name__ == "__main__":
     df_young = pd.read_csv("data/results-survey779776.csv")
+    df_young = check_age(df_young, 18, 35)
     df_young = df_young.assign(young_group=1)
 
     df_old = pd.read_csv("data/results-survey374736.csv")
+    df_old = check_age(df_old, 35, np.inf)
     df_old = df_old.assign(young_group=0)
 
     df = pd.concat([df_young, df_old], ignore_index=True)
@@ -50,6 +62,8 @@ if __name__ == "__main__":
     # drop columns with to litte partisans
     df = df.dropna(axis="columns", thresh=min_count)
     # df = df.dropna()
+    # print(df[df["young_group"] == 1].shape)
+    # print(df[df["young_group"] == 0].shape)
 
     df_grouped = group_data(df, print_cronbach=False)
 
@@ -94,30 +108,44 @@ if __name__ == "__main__":
     calc_correlation(
         df_grouped[["upskilling", "reskilling", "usage", "age", "young_group"]],
         save_fig=True,
+        fig_title="Correlation Matrix",
     )
-    for y in ["autonomous_motivation", "controlled_motivation"]:
-        linear_regression(
-            df_X=df_grouped[
-                [
-                    "upskilling",
-                    "reskilling",
-                    "age",
-                    "usage",
-                ]
-            ],
-            df_Y=df_grouped[y],
-            print_summary=True,
-        )
-
-    do_ttest(
+    corr_matrix = calc_correlation_motivation_skilling(
         df_grouped[
             [
-                "autonomous_motivation",
+                "upskilling",
+                "reskilling",
                 "controlled_motivation",
-                "usefulness_work",
-                "usefulness_learning",
-                "young_group",
+                "autonomous_motivation",
             ]
-        ],
-        print_results=True,
+        ]
     )
+    print(corr_matrix)
+
+    if False:
+        for y in ["autonomous_motivation", "controlled_motivation"]:
+            linear_regression(
+                df_X=df_grouped[
+                    [
+                        "upskilling",
+                        "reskilling",
+                        "age",
+                        "usage",
+                    ]
+                ],
+                df_Y=df_grouped[y],
+                print_summary=True,
+            )
+
+        do_ttest(
+            df_grouped[
+                [
+                    "autonomous_motivation",
+                    "controlled_motivation",
+                    "usefulness_work",
+                    "usefulness_learning",
+                    "young_group",
+                ]
+            ],
+            print_results=True,
+        )

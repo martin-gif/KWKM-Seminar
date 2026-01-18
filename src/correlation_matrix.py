@@ -18,29 +18,37 @@ def _fig(df, file_name: str, title: str = None):
     plt.savefig(file_name)
 
 
-def calc_correlation(df: pd.DataFrame, save_fig=False, split_age_groups=False):
-    conditions = []
-    if split_age_groups:
-        conditions.append(
-            df["young_group"] == 1
-        )  # split into young group and older group
-        conditions.append(df["young_group"] == 0)
-    else:
-        conditions.append(df["young_group"] <= 2)  # take all
+def calc_correlation_motivation_skilling(
+    df: pd.DataFrame, save_fig=False, fig_title: str = None
+):
+    if save_fig and fig_title is None:
+        raise ValueError("fig_title is required for Figure")
 
-    return_matrices = []
-
-    for index, condition in enumerate(conditions):
-        corr_matrix = df.loc[condition, df.columns != "young_group"].corr(
-            method="pearson"
+    corr_matrix = df.corr(method="pearson")
+    corr_matrix = corr_matrix.drop(
+        columns=["controlled_motivation", "autonomous_motivation"], axis="1"
+    )
+    corr_matrix = corr_matrix.drop(index=["upskilling", "reskilling"], axis="0")
+    if save_fig:
+        _fig(
+            corr_matrix,
+            title=fig_title,
+            file_name=f"figures/{fig_title}.png",
         )
-        return_matrices.append(corr_matrix)
 
-        if save_fig:
-            _fig(
-                corr_matrix,
-                title=f"correlation group {index}",
-                file_name=f"figures/corr_matrix_group_{index}.png",
-            )
+    return corr_matrix
 
-    return return_matrices
+
+def calc_correlation(df: pd.DataFrame, save_fig=False, fig_title: str = None):
+    if save_fig and fig_title is None:
+        raise ValueError("fig_title is required for Figure")
+
+    corr_matrix = df.corr(method="pearson")
+    if save_fig:
+        _fig(
+            corr_matrix,
+            title=fig_title,
+            file_name=f"figures/{fig_title}.png",
+        )
+
+    return corr_matrix
