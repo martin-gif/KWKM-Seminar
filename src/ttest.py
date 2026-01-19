@@ -1,5 +1,5 @@
 from numpy.ma.core import equal
-from scipy.stats import ttest_ind, levene, shapiro
+from scipy.stats import ttest_ind, levene
 import pandas as pd
 import warnings
 
@@ -24,7 +24,11 @@ def do_ttest(df: pd.DataFrame, print_results: bool = False):
             warnings.warn(f"{column} is not numeric")
             continue
 
-        t, p = ttest_ind(g0, g1, equal_var=equal_var, nan_policy="omit")
+        result = ttest_ind(g0, g1, equal_var=equal_var, nan_policy="omit")
+        t, p = result[0], result[1]
+        confidence_intervall_lower, confidence_intervall_higher = (
+            result.confidence_interval()
+        )
 
         results.append(
             {
@@ -33,6 +37,9 @@ def do_ttest(df: pd.DataFrame, print_results: bool = False):
                 "mean_young": g1.mean(),
                 "t": t,
                 "p": p,
+                "degrees_of_freedom": result.df,
+                "confidence_intervall_lower": confidence_intervall_lower,
+                "confidence_intervall_higher": confidence_intervall_higher,
             }
         )
         if print_results:
@@ -44,7 +51,7 @@ def do_ttest(df: pd.DataFrame, print_results: bool = False):
 
     results_df = pd.DataFrame(results)
     if print_results:
-        print(results_df)
+        print(results_df.to_string())
     return results_df
 
 

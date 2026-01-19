@@ -61,9 +61,11 @@ def check_age(df, low_bound, upper_bound):
 if __name__ == "__main__":
     # Load and combine datasets
     df_young = pd.read_csv(YOUNG_CSV)
+    df_young = check_age(df_young, 18, 35)
     df_young = df_young.assign(young_group=YOUNG_VALUE)
 
     df_old = pd.read_csv(OLD_CSV)
+    df_old = check_age(df_old, 35, np.inf)
     df_old = df_old.assign(young_group=OLD_VALUE)
 
     df = pd.concat([df_young, df_old], ignore_index=True)
@@ -81,7 +83,6 @@ if __name__ == "__main__":
     # print(df[df["young_group"] == 1].shape)
     # print(df[df["young_group"] == 0].shape)
 
-    # Create grouped dataset with calculated variables
     # Create grouped dataset with calculated variables
     df_grouped = group_data(df, print_cronbach=False)
 
@@ -109,7 +110,7 @@ if __name__ == "__main__":
         young_value=YOUNG_VALUE,
         old_value=OLD_VALUE,
     )
-    
+
     # Prepare clean dataset for SurveyAnalyzer methods
     # (uses autonomous_use, upskill_orientation, reskill_orientation)
     df_clean = analyzer.prepare_clean_dataset()
@@ -144,13 +145,54 @@ if __name__ == "__main__":
         generate_files=GENERATE_FILES
     )
 
-    # Survey statistics 
+    # Survey statistics using data from main
     survey_stats = SurveyStatistics(df=df)
     survey_stats.print_summary(
         print_output=True,
         generate_files=GENERATE_FILES
     )
 
-    # Additional analyses
-    calc_correlation(df_grouped, save_fig=False)
-    do_ttest(df)
+    calc_correlation(
+        df_grouped[["upskilling", "reskilling", "usage", "age", "young_group"]],
+        save_fig=True,
+        fig_title="RQ 2",
+    )
+    corr_matrix = calc_correlation_motivation_skilling(
+        df_grouped[
+            [
+                "upskilling",
+                "reskilling",
+                "controlled_motivation",
+                "autonomous_motivation",
+            ]
+        ],
+        save_fig=True,
+        fig_title="RQ 3",
+    )
+
+    # Multi lineare regression
+    for y in ["autonomous_motivation", "controlled_motivation"]:
+        linear_regression(
+            df_X=df_grouped[
+                [
+                    "upskilling",
+                    "reskilling",
+                    "age",
+                    "usage",
+                ]
+            ],
+            df_Y=df_grouped[y],
+            print_summary=True,
+        )
+    do_ttest(
+        df_grouped[
+            [
+                "autonomous_motivation",
+                "controlled_motivation",
+                "usefulness_work",
+                "usefulness_learning",
+                "young_group",
+            ]
+        ],
+        print_results=True,
+    )
