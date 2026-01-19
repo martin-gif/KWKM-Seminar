@@ -17,8 +17,8 @@ from src.linear_regression import linear_regression
 # ===========================
 # CONFIGURATION
 # ===========================
-PRINT_OUTPUT = False      # Print analysis results to console
-GENERATE_FILES = False    # Save plots and files
+PRINT_OUTPUT = False  # Print analysis results to console
+GENERATE_FILES = False  # Save plots and files
 
 # Data configuration
 YOUNG_CSV = "data/results-survey779776.csv"
@@ -33,9 +33,7 @@ COLUMN_ANSWER_PERCENTAGE = 0.8
 
 
 def creat_head_dict_from_csv():
-    meta = pd.read_csv(
-        KEY_CSV
-    )  # first row of survey with codes and question
+    meta = pd.read_csv(KEY_CSV)  # first row of survey with codes and question
     meta = meta.columns.to_series().reset_index(drop=True)
     meta = meta.to_frame(name="raw")
 
@@ -79,7 +77,6 @@ if __name__ == "__main__":
     df = df[df["submitdate"].notna()]
     # drop columns with to litte partisans
     df = df.dropna(axis="columns", thresh=min_count)
-    # df = df.dropna()
     # print(df[df["young_group"] == 1].shape)
     # print(df[df["young_group"] == 0].shape)
 
@@ -100,99 +97,88 @@ if __name__ == "__main__":
     )
     print(desc)
 
-    # Initialize analyzer and prepare its specific dataset
-    # Note: SurveyAnalyzer uses different variables than df_grouped
-    analyzer = SurveyAnalyzer(
-        young_csv=YOUNG_CSV,
-        old_csv=OLD_CSV,
-        key_csv=KEY_CSV,
-        group_col=GROUP_COL,
-        young_value=YOUNG_VALUE,
-        old_value=OLD_VALUE,
-    )
+    if False:
+        # Initialize analyzer and prepare its specific dataset
+        # Note: SurveyAnalyzer uses different variables than df_grouped
+        analyzer = SurveyAnalyzer(
+            young_csv=YOUNG_CSV,
+            old_csv=OLD_CSV,
+            key_csv=KEY_CSV,
+            group_col=GROUP_COL,
+            young_value=YOUNG_VALUE,
+            old_value=OLD_VALUE,
+        )
 
-    # Prepare clean dataset for SurveyAnalyzer methods
-    # (uses autonomous_use, upskill_orientation, reskill_orientation)
-    df_clean = analyzer.prepare_clean_dataset()
+        # Prepare clean dataset for SurveyAnalyzer methods
+        # (uses autonomous_use, upskill_orientation, reskill_orientation)
+        df_clean = analyzer.prepare_clean_dataset()
 
-    # Run SurveyAnalyzer analyses
-    analyzer.run_ttest_autonomous_by_group(
-        df_clean,
-        print_output=PRINT_OUTPUT,
-        generate_files=GENERATE_FILES
-    )
-    analyzer.run_ancova(
-        df_clean,
-        print_output=PRINT_OUTPUT,
-        generate_files=GENERATE_FILES
-    )
+        # Run SurveyAnalyzer analyses
+        analyzer.run_ttest_autonomous_by_group(
+            df_clean, print_output=PRINT_OUTPUT, generate_files=GENERATE_FILES
+        )
+        analyzer.run_ancova(
+            df_clean, print_output=PRINT_OUTPUT, generate_files=GENERATE_FILES
+        )
 
-    df_clean.to_csv("data/analysis.csv", index=False)
+        df_clean.to_csv("data/analysis.csv", index=False)
 
-    analyzer.plot_group_box_and_points(
-        df_clean,
-        print_output=PRINT_OUTPUT,
-        generate_files=GENERATE_FILES
-    )
-    analyzer.plot_histograms(
-        df_clean,
-        print_output=PRINT_OUTPUT,
-        generate_files=GENERATE_FILES
-    )
-    analyzer.plot_scatter_autonomous_vs_reskill(
-        df_clean,
-        print_output=PRINT_OUTPUT,
-        generate_files=GENERATE_FILES
-    )
+        analyzer.plot_group_box_and_points(
+            df_clean, print_output=PRINT_OUTPUT, generate_files=GENERATE_FILES
+        )
+        analyzer.plot_histograms(
+            df_clean, print_output=PRINT_OUTPUT, generate_files=GENERATE_FILES
+        )
+        analyzer.plot_scatter_autonomous_vs_reskill(
+            df_clean, print_output=PRINT_OUTPUT, generate_files=GENERATE_FILES
+        )
 
-    # Survey statistics using data from main
-    survey_stats = SurveyStatistics(df=df)
-    survey_stats.print_summary(
-        print_output=True,
-        generate_files=GENERATE_FILES
-    )
+        # Survey statistics using data from main
+        survey_stats = SurveyStatistics(df=df)
+        survey_stats.print_summary(print_output=True, generate_files=GENERATE_FILES)
 
-    calc_correlation(
-        df_grouped[["upskilling", "reskilling", "usage", "age", "young_group"]],
-        save_fig=True,
-        fig_title="RQ 2",
-    )
-    corr_matrix = calc_correlation_motivation_skilling(
-        df_grouped[
-            [
-                "upskilling",
-                "reskilling",
-                "controlled_motivation",
-                "autonomous_motivation",
-            ]
-        ],
-        save_fig=True,
-        fig_title="RQ 3",
-    )
-
-    # Multi lineare regression
-    for y in ["autonomous_motivation", "controlled_motivation"]:
-        linear_regression(
-            df_X=df_grouped[
+    if False:
+        calc_correlation(
+            df_grouped[["upskilling", "reskilling", "usage", "age", "young_group"]],
+            save_fig=True,
+            fig_title="RQ 2",
+        )
+        corr_matrix = calc_correlation_motivation_skilling(
+            df_grouped[
                 [
                     "upskilling",
                     "reskilling",
-                    "age",
-                    "usage",
+                    "controlled_motivation",
+                    "autonomous_motivation",
                 ]
             ],
-            df_Y=df_grouped[y],
-            print_summary=True,
+            save_fig=True,
+            fig_title="RQ 3",
         )
-    do_ttest(
-        df_grouped[
-            [
-                "autonomous_motivation",
-                "controlled_motivation",
-                "usefulness_work",
-                "usefulness_learning",
-                "young_group",
-            ]
-        ],
-        print_results=True,
-    )
+
+        # Multi lineare regression
+        for y in ["autonomous_motivation", "controlled_motivation"]:
+            linear_regression(
+                df_X=df_grouped[
+                    [
+                        "upskilling",
+                        "reskilling",
+                        "age",
+                        "usage",
+                    ]
+                ],
+                df_Y=df_grouped[y],
+                print_summary=True,
+            )
+        do_ttest(
+            df_grouped[
+                [
+                    "autonomous_motivation",
+                    "controlled_motivation",
+                    "usefulness_work",
+                    "usefulness_learning",
+                    "young_group",
+                ]
+            ],
+            print_results=True,
+        )
