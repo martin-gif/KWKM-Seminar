@@ -53,17 +53,20 @@ SCALES = {
 def group_data(input_df, print_cronbach=False) -> pd.DataFrame:
     all_items = [item for items in SCALES.values() for item in items]
     unique_items = list(dict.fromkeys(all_items))
-    cols = [c for c in unique_items if c in input_df.columns]
+    # cols = [c for c in unique_items if c in input_df.columns]
     # input_df[all_items] = input_df[all_items].apply(pd.to_numeric, errors="coerce")
-    input_df.loc[:, cols] = input_df.loc[:, cols].apply(pd.to_numeric, errors="coerce")
+    input_df.loc[:, all_items] = input_df.loc[:, all_items].apply(
+        pd.to_numeric, errors="coerce"
+    )
 
     df = pd.DataFrame()
     for key, column_list in SCALES.items():
         if print_cronbach:
-            cronbach = pg.cronbach_alpha(data=input_df[column_list])
-            print(
-                f"Cronbach's Alpha für group {key} = {round(cronbach[0], 3)}, mit der grenze {cronbach[1]}"
-            )
+            if len(column_list) > 1:
+                cronbach = pg.cronbach_alpha(data=input_df[column_list])
+                print(
+                    f"Cronbach's Alpha für group {key} = {round(cronbach[0], 3)}, mit der grenze {cronbach[1]}"
+                )
         df[key] = input_df[column_list].mean(axis=1)
 
     ext_mat = "external_regulation_material"

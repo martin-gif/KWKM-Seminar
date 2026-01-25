@@ -81,7 +81,7 @@ if __name__ == "__main__":
     # print(df[df["young_group"] == 0].shape)
 
     # Create grouped dataset with calculated variables
-    df_grouped = group_data(df, print_cronbach=False)
+    df_grouped = group_data(df, print_cronbach=True)
 
     # Define variables for analysis
     vars_usefulness = ["usefulness_work", "usefulness_learning"]
@@ -95,7 +95,7 @@ if __name__ == "__main__":
         vars_motivation=vars_motivation,
         confidence=0.95,
     )
-    print(desc)
+    # print(desc)
 
     if False:
         # Initialize analyzer and prepare its specific dataset
@@ -137,11 +137,11 @@ if __name__ == "__main__":
         survey_stats = SurveyStatistics(df=df)
         survey_stats.print_summary(print_output=True, generate_files=GENERATE_FILES)
 
-    if False:
-        calc_correlation(
-            df_grouped[["upskilling", "reskilling", "usage", "age", "young_group"]],
+        corr_1 = calc_correlation(
+            df_grouped[["upskilling", "reskilling", "usage", "age"]],
             save_fig=True,
-            fig_title="RQ 2",
+            fig_title_correlation="Correlation matrix of predictors",
+            fig_title_pValue="Matrix of significance levels",
         )
         corr_matrix = calc_correlation_motivation_skilling(
             df_grouped[

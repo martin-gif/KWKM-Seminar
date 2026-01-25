@@ -69,8 +69,13 @@ def calc_correlation_motivation_skilling(
     return r_matrix
 
 
-def calc_correlation(df: pd.DataFrame, save_fig=False, fig_title: str = None):
-    if save_fig and fig_title is None:
+def calc_correlation(
+    df: pd.DataFrame,
+    save_fig=False,
+    fig_title_correlation: str = None,
+    fig_title_pValue: str = None,
+):
+    if save_fig and fig_title_correlation is None:
         raise ValueError("fig_title is required for Figure")
 
     cols = pd.DataFrame(columns=df.columns).sort_index(axis=1)
@@ -84,17 +89,19 @@ def calc_correlation(df: pd.DataFrame, save_fig=False, fig_title: str = None):
             r_matrix.loc[r, c] = round(r_val, 4)
             p_matrix.loc[r, c] = round(p_val, 4)
 
-    corr_matrix = df.corr(method="pearson")
+    if fig_title_correlation is not None and fig_title_pValue is None:
+        fig_title_pValue = fig_title_correlation
+
     if save_fig:
         _fig(
             r_matrix,
-            title=fig_title,
-            file_name=f"figures/{fig_title}_corrMatrix.png",
+            title=fig_title_correlation,
+            file_name=f"figures/{fig_title_correlation}_corrMatrix.png",
         )
         _fig(
             p_matrix,
-            title=fig_title,
-            file_name=f"figures/{fig_title}_pMatrix.png",
+            title=fig_title_pValue,
+            file_name=f"figures/{fig_title_pValue}_pMatrix.png",
         )
 
     return r_matrix
